@@ -9,15 +9,8 @@ import {
 
 export default function Home() {
   return (
-    <div>
-      <SignedOut>
-        <SignInButton mode="modal" />
-        <Button>Sign In</Button>
-      </SignedOut>
-
-      <SignedIn>
-        <UserButton />
-      </SignedIn>
+    <div className="m-4">
+      <h1>Home Page Content</h1>
     </div>
   );
 }
