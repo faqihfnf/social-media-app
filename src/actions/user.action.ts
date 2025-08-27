@@ -1,39 +1,95 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { auth, currentUser } from "@clerk/nextjs/server";
+import { currentUser } from "@clerk/nextjs/server";
 
 export async function syncUser() {
+  const user = await currentUser();
+  if (!user) return null;
+
   try {
-    const { userId } = await auth();
-    const user = await currentUser();
+    const email = user.emailAddresses[0]?.emailAddress || "";
+    const username = user.username || email || `user_${user.id.slice(-8)}`;
 
-    //# check if user is logged in
-    if (!userId || !user) return;
-
-    //# check if user already exists
+    // Cek apakah user sudah ada berdasarkan clerkId
     const existingUser = await prisma.user.findUnique({
-      where: {
-        clerkId: userId,
-      },
+      where: { clerkId: user.id },
     });
 
-    if (existingUser) return existingUser;
+    if (existingUser) {
+      // Update user yang sudah ada
+      const dbUser = await prisma.user.update({
+        where: { clerkId: user.id },
+        data: {
+          name: `${user.firstName || ""} ${user.lastName || ""}`.trim(),
+          username: username,
+          image: user.imageUrl,
+          // Jangan update email jika sudah ada untuk menghindari konflik
+        },
+      });
+      return dbUser;
+    } else {
+      // Cek apakah email sudah digunakan user lain
+      const emailConflict = await prisma.user.findUnique({
+        where: { email: email },
+      });
 
-    //# create user
-    const dbUser = await prisma.user.create({
-      data: {
-        clerkId: userId,
-        name: `${user.firstName || ""} ${user.lastName || ""}`,
-        username:
-          user.username ?? user.emailAddresses[0].emailAddress.split("@")[0],
-        email: user.emailAddresses[0].emailAddress,
-        image: user.imageUrl,
-      },
-    });
+      if (emailConflict) {
+        // Jika email sudah digunakan, gunakan email yang dimodifikasi
+        const modifiedEmail = `${user.id}+${email}`;
 
-    return dbUser;
+        const dbUser = await prisma.user.create({
+          data: {
+            clerkId: user.id,
+            name: `${user.firstName || ""} ${user.lastName || ""}`.trim(),
+            username: username,
+            email: modifiedEmail,
+            image: user.imageUrl,
+          },
+        });
+        return dbUser;
+      } else {
+        // Email belum digunakan, buat user baru
+        const dbUser = await prisma.user.create({
+          data: {
+            clerkId: user.id,
+            name: `${user.firstName || ""} ${user.lastName || ""}`.trim(),
+            username: username,
+            email: email,
+            image: user.imageUrl,
+          },
+        });
+        return dbUser;
+      }
+    }
   } catch (error) {
-    console.log("error in syncUser", error);
+    console.error("Error syncing user:", error);
+
+    // Fallback: coba ambil user yang sudah ada
+    try {
+      return await prisma.user.findUnique({
+        where: { clerkId: user.id },
+      });
+    } catch (fallbackError) {
+      console.error("Fallback error:", fallbackError);
+      return null;
+    }
   }
+}
+
+export async function getUserByClerkId(clerkId: string) {
+  return prisma.user.findUnique({
+    where: {
+      clerkId,
+    },
+    include: {
+      _count: {
+        select: {
+          followers: true,
+          following: true,
+          posts: true,
+        },
+      },
+    },
+  });
 }
