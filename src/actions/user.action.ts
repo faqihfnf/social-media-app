@@ -1,7 +1,8 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { currentUser } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
+import { get } from "http";
 
 export async function syncUser() {
   const user = await currentUser();
@@ -92,4 +93,16 @@ export async function getUserByClerkId(clerkId: string) {
       },
     },
   });
+}
+
+export async function getDbUserId() {
+  const { userId: clerkId } = await auth();
+
+  if (!clerkId) throw new Error("Unauthorized");
+
+  const user = await getUserByClerkId(clerkId);
+
+  if (!user) throw new Error("User not found");
+
+  return user.id;
 }
