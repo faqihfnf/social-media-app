@@ -7,6 +7,8 @@ import { Avatar, AvatarImage } from "../ui/avatar";
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
 import { ImageIcon, Loader2Icon, SendIcon } from "lucide-react";
+import { createPost } from "@/actions/post.action";
+import toast from "react-hot-toast";
 
 export default function CreatePost() {
   const { user } = useUser();
@@ -15,7 +17,25 @@ export default function CreatePost() {
   const [isPosting, setIsPosting] = useState(false);
   const [showImageUpload, setShowImageUpload] = useState(false);
 
-  const handleSubmit = async () => {};
+  const handleSubmit = async () => {
+    if (!content.trim() && !imageUrl) return;
+
+    setIsPosting(true);
+    try {
+      const result = await createPost(content, imageUrl);
+      if (result.success) {
+        //# reset form
+        setContent("");
+        setImageUrl("");
+        setShowImageUpload(false);
+
+        toast.success("Post created successfully");
+      }
+    } catch (error) {
+    } finally {
+      setIsPosting(false);
+    }
+  };
 
   return (
     <Card className="mb-6">

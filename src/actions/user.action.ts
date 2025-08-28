@@ -2,7 +2,6 @@
 
 import prisma from "@/lib/prisma";
 import { auth, currentUser } from "@clerk/nextjs/server";
-import { get } from "http";
 
 export async function syncUser() {
   const user = await currentUser();
