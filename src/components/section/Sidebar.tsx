@@ -12,11 +12,8 @@ async function Sidebar() {
   const authUser = await currentUser();
   if (!authUser) return <UnAuthenticatedSidebar />;
 
-  // Pastikan user sudah tersinkronisasi
-  await syncUser();
-
   const user = await getUserByClerkId(authUser.id);
-  if (!user) return <p>User not found</p>;
+  if (!user) return null;
 
   return (
     <div className="sticky top-20">
