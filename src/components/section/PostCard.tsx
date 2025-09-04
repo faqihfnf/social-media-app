@@ -100,7 +100,7 @@ export default function PostCard({
               </Avatar>
             </Link>
 
-            {/* Post Header and Content */}
+            {/* POST HEADER & TEXT CONTENT */}
             <div className="flex-1 min-w-0">
               <div className="flex items-start justify-between">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-2 truncate">
@@ -131,19 +131,20 @@ export default function PostCard({
                 {post.content}
               </p>
             </div>
-
-            {/* Post Image */}
-            {post.image && (
-              <div className="rounded-lg overflow-hidden">
-                <img
-                  src={post.image}
-                  alt="Post content"
-                  className="w-full h-auto object-cover"
-                />
-              </div>
-            )}
           </div>
-          {/* Like and Comment Buttons */}
+
+          {/* POST IMAGE */}
+          {post.image && (
+            <div className="rounded-lg overflow-hidden">
+              <img
+                src={post.image}
+                alt="Post content"
+                className="w-full h-auto object-cover"
+              />
+            </div>
+          )}
+
+          {/* LIKE & COMMENT BUTTONS */}
           <div className="flex items-center pt-2 space-x-4">
             {user ? (
               <Button
@@ -188,7 +189,7 @@ export default function PostCard({
             </Button>
           </div>
 
-          {/* Comment Section */}
+          {/* COMMENTS SECTION */}
           {showComments && (
             <div className="space-y-4 pt-4 border-t">
               <div className="space-y-4">
