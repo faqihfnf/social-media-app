@@ -4,7 +4,7 @@ import {
   getUserPosts,
   isFollowing,
 } from "@/actions/profile.actions";
-import ProfilePageClient from "@/components/section/ProfilePageClient";
+import ProfilePageClient from "@/app/profile/[username]/ProfilePageClient";
 import { notFound } from "next/navigation";
 
 export async function generateMetadata({

@@ -10,10 +10,10 @@ import { SignInButton, useUser } from "@clerk/nextjs";
 import { format } from "date-fns";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { Card, CardContent } from "../ui/card";
-import { Avatar, AvatarImage } from "../ui/avatar";
-import { Separator } from "../ui/separator";
-import { Button } from "../ui/button";
+import { Card, CardContent } from "../../../components/ui/card";
+import { Avatar, AvatarImage } from "../../../components/ui/avatar";
+import { Separator } from "../../../components/ui/separator";
+import { Button } from "../../../components/ui/button";
 import {
   CalendarIcon,
   EditIcon,
@@ -28,12 +28,17 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "../ui/dialog";
-import { Label } from "../ui/label";
-import { Input } from "../ui/input";
-import { Textarea } from "../ui/textarea";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
-import PostCard from "./PostCard";
+} from "../../../components/ui/dialog";
+import { Label } from "../../../components/ui/label";
+import { Input } from "../../../components/ui/input";
+import { Textarea } from "../../../components/ui/textarea";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "../../../components/ui/tabs";
+import PostCard from "../../../components/section/PostCard";
 
 type User = Awaited<ReturnType<typeof getProfileByUsername>>;
 type Posts = Awaited<ReturnType<typeof getUserPosts>>;
