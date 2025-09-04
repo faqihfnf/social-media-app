@@ -33,6 +33,7 @@ export default function CreatePost() {
         toast.success("Post created successfully");
       }
     } catch (error) {
+      toast.error("Failed to create post" + error);
     } finally {
       setIsPosting(false);
     }

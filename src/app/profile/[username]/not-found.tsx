@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { HomeIcon, ArrowLeftIcon } from "lucide-react";
+import { HomeIcon } from "lucide-react";
 
 export default function NotFound() {
   return (
@@ -18,7 +18,7 @@ export default function NotFound() {
                 User not found
               </h1>
               <p className="text-muted-foreground">
-                The user you're looking for doesn't exist.
+                The user you&apos;re looking for doesn&apos;t exist.
               </p>
             </div>
 

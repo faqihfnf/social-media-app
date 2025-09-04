@@ -1,7 +1,8 @@
 "use client";
 
-import { UploadButton, UploadDropzone } from "@/lib/uploadthing";
+import { UploadDropzone } from "@/lib/uploadthing";
 import { XIcon } from "lucide-react";
+import Image from "next/image";
 import { twMerge } from "tailwind-merge";
 
 interface ImageUploadProps {
@@ -14,8 +15,10 @@ function ImageUpload({ endpoint, onChange, value }: ImageUploadProps) {
   if (value) {
     return (
       <div className="relative size-40">
-        <img
+        <Image
           src={value}
+          width={160}
+          height={160}
           alt="Upload"
           className="rounded-md size-40 object-cover"
         />
