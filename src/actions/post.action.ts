@@ -3,6 +3,10 @@
 import prisma from "@/lib/prisma";
 import { getDbUserId } from "./user.action";
 import { revalidatePath } from "next/cache";
+import { UTApi } from "uploadthing/server";
+
+// Initialize UploadThing API
+const utapi = new UTApi();
 
 export async function createPost(content: string, image: string) {
   try {
@@ -189,19 +193,50 @@ export async function createComment(postId: string, content: string) {
   }
 }
 
+// Helper function to extract file key from UploadThing URL
+function extractFileKey(url: string): string | null {
+  try {
+    // UploadThing URLs format: https://utfs.io/f/{fileKey}
+    const match = url.match(/\/f\/([^\/\?]+)/);
+    return match ? match[1] : null;
+  } catch (error) {
+    console.error("Error extracting file key:", error);
+    return null;
+  }
+}
+
 export async function deletePost(postId: string) {
   try {
     const userId = await getDbUserId();
 
     const post = await prisma.post.findUnique({
       where: { id: postId },
-      select: { authorId: true },
+      select: {
+        authorId: true,
+        image: true, // Include image URL to extract file key
+      },
     });
 
     if (!post) throw new Error("Post not found");
     if (post.authorId !== userId)
       throw new Error("Unauthorized - no delete permission");
 
+    // Delete from UploadThing if post has an image
+    if (post.image) {
+      try {
+        const fileKey = extractFileKey(post.image);
+        if (fileKey) {
+          await utapi.deleteFiles([fileKey]);
+          console.log(`Successfully deleted file from UploadThing: ${fileKey}`);
+        }
+      } catch (uploadError) {
+        console.error("Failed to delete file from UploadThing:", uploadError);
+        // Don't throw error here - still proceed with database deletion
+        // You can choose to throw if you want strict consistency
+      }
+    }
+
+    // Delete from database
     await prisma.post.delete({
       where: { id: postId },
     });
