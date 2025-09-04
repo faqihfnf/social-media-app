@@ -15,7 +15,7 @@ export default async function Navbar() {
           <div className="flex items-center">
             <Link
               href="/"
-              className="text-xl font-bold text-primary font-mono tracking-wider">
+              className="text-3xl font-bold text-primary font-lobster tracking-wider">
               Sapa.
             </Link>
           </div>
